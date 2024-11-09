@@ -27,8 +27,12 @@
 <meta property="og:description" content="异或（Exclusive or）是对两个运算元的一种逻辑分析类型。与一般的逻辑或不同，当两两数值相同时为否，而数值不同时为真。不常使用异或操作符可能容易记错，这里有个小技巧：异或就是求异，找不同。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://sailingsan.top/2024/10/20/%E5%9B%BE%E7%89%87%E5%BC%82%E6%88%96%E5%8A%A0%E5%AF%86/xor.png">
+<meta property="og:image" content="https://sailingsan.top/2024/10/20/%E5%9B%BE%E7%89%87%E5%BC%82%E6%88%96%E5%8A%A0%E5%AF%86/dog_bike_car.jpg">
+<meta property="og:image" content="https://sailingsan.top/2024/10/20/%E5%9B%BE%E7%89%87%E5%BC%82%E6%88%96%E5%8A%A0%E5%AF%86/img_encrypted.jpg">
+<meta property="og:image" content="https://sailingsan.top/2024/10/20/%E5%9B%BE%E7%89%87%E5%BC%82%E6%88%96%E5%8A%A0%E5%AF%86/dog_bike_car.jpg">
+<meta property="og:image" content="https://sailingsan.top/2024/10/20/%E5%9B%BE%E7%89%87%E5%BC%82%E6%88%96%E5%8A%A0%E5%AF%86/xor_key.jpg">
 <meta property="article:published_time" content="2024-10-20T03:21:56.000Z">
-<meta property="article:modified_time" content="2024-11-03T17:37:46.162Z">
+<meta property="article:modified_time" content="2024-11-09T16:33:41.233Z">
 <meta property="article:author" content="san">
 <meta property="article:tag" content="CV">
 <meta name="twitter:card" content="summary">
@@ -145,7 +149,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%82%E6%88%96%E6%93%8D%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">异或操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%82%E6%88%96%E5%AF%86%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">异或密码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%BC%82%E6%88%96%E5%8A%A0%E5%AF%86"><span class="nav-number">3.</span> <span class="nav-text">字符串异或加密</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%BE%E7%89%87%E5%BC%82%E6%88%96%E5%8A%A0%E5%AF%86"><span class="nav-number">4.</span> <span class="nav-text">图片异或加密</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%82%E6%88%96%E6%93%8D%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">异或操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%82%E6%88%96%E5%AF%86%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">异或密码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%BC%82%E6%88%96%E5%8A%A0%E5%AF%86"><span class="nav-number">3.</span> <span class="nav-text">字符串异或加密</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%BE%E7%89%87%E5%BC%82%E6%88%96%E5%8A%A0%E5%AF%86"><span class="nav-number">4.</span> <span class="nav-text">图片异或加密</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%B2%E7%9F%A5%E6%98%8E%E6%96%87%E6%94%BB%E5%87%BB"><span class="nav-number">5.</span> <span class="nav-text">已知明文攻击</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -237,7 +241,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2024-11-04 01:37:46" itemprop="dateModified" datetime="2024-11-04T01:37:46+08:00">2024-11-04</time>
+      <time title="修改时间：2024-11-10 00:33:41" itemprop="dateModified" datetime="2024-11-10T00:33:41+08:00">2024-11-10</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -256,7 +260,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.4k</span>
+      <span>2.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -282,11 +286,11 @@ or）是对两个运算元的一种逻辑分析类型。与一般的逻辑或不
 <h1 id="异或操作">异或操作</h1>
 <p>异或满足一下性质：</p>
 <ul>
-<li>结合律：A<sup>(B</sup>C)=(A<sup>B)</sup>C</li>
-<li>交换律：A<sup>B=B</sup>A</li>
-<li>恒等律：A^0=A</li>
-<li>归零律：A^A=0</li>
-<li>对合运算：A<sup>B</sup>B=A^0=A</li>
+<li>结合律：A ^ (B ^ C)=(A ^ B) ^ C</li>
+<li>交换律：A ^ B=B ^ A</li>
+<li>恒等律：A ^ 0=A</li>
+<li>归零律：A ^ A=0</li>
+<li>对合运算：A ^ B ^ B=A ^ 0=A</li>
 </ul>
 <p>备注：^在编程语言中表示异或，和布尔代数中的运算符“逻辑与”不要弄混。</p>
 <p>有一种密码称之为<strong>互逆密码</strong>，将明文输入密码学系统以获得密文一样，可以将密文输入到系统中的相同位置以获得明文。互易密码有时也称为<strong>自反密码</strong>。对合运算性质的操作常用于互逆密码。</p>
@@ -295,16 +299,37 @@ or）是对两个运算元的一种逻辑分析类型。与一般的逻辑或不
 <p>比如文本串加密，文本串行的每个字符可以通过与给定的密钥进行按位异或运算来加密。如果要解密，只需要将加密后的结果与密钥再次进行按位异或运算即可。</p>
 <p>如果使用不断重复的密钥，利用频率分析就可以破解这种简单的异或密码。如果消息的内容被猜出或知道，密钥就会泄露。异或密码值得使用的原因主要是其易于实现，而且<strong>计算成本小</strong>。简单重复异或加密有时用于不需要特别安全的情况下来隐藏信息。</p>
 <p>如果密钥是随机的（不重复），而且与消息长度相同，异或密码就会更为安全。当然异或密码运算符在<a href="https://zh.wikipedia.org/wiki/已知明文攻击">已知明文攻击</a>下是脆弱的。因为明文^密文=密钥。</p>
-<p>设A为明文，B为密钥，C为密文，则A<sup>B=C，则A</sup>C=A<sup>A</sup>B=B，很容易根据A和C求B</p>
 <h1 id="字符串异或加密">字符串异或加密</h1>
 <p>字符串异或加密代码如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">test_string_xor</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;测试异或加密解密&quot;&quot;&quot;</span></span><br><span class="line">    message = <span class="string">&#x27;This is a secret message&#x27;</span></span><br><span class="line">    key = <span class="string">&#x27;whoami&#x27;</span></span><br><span class="line">    encrypted = string_xor(message, key)</span><br><span class="line">    decrypted = string_xor(encrypted, key)</span><br><span class="line">    <span class="keyword">assert</span> message == decrypted</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 输出加密后的字符串,可能是乱码，一般会再base64下</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;xor-encrypted:&#x27;</span>, encrypted)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 输出解密后的字符串 &#x27;This is a secret message&#x27;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;xor-decrypted:&#x27;</span>, decrypted)</span><br><span class="line"></span><br><span class="line">    decrypted_key = string_xor(message, encrypted)</span><br><span class="line">    <span class="comment"># 输出解密后的key &#x27;whoami&#x27;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;xor-key:&quot;</span>, decrypted_key)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">string_xor</span>(<span class="params">message: <span class="built_in">str</span>, key: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;字符串异或&quot;&quot;&quot;</span></span><br><span class="line">    key_patch = []</span><br><span class="line">    len_key = <span class="built_in">len</span>(key)</span><br><span class="line">    len_msg = <span class="built_in">len</span>(message)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(len_msg):</span><br><span class="line">        <span class="keyword">if</span> i &gt;= len_key:</span><br><span class="line">            key_patch.append(key[i % len_key])</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            key_patch.append(key[i])</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;&quot;</span>.join([<span class="built_in">chr</span>(<span class="built_in">ord</span>(c) ^ <span class="built_in">ord</span>(k)) <span class="keyword">for</span> (c, k) <span class="keyword">in</span> <span class="built_in">zip</span>(message, key_patch)])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>上面的代码输出如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xor-encrypted: # M HAM    // 乱码，可以base64一下</span><br><span class="line">xor-decrypted: This is a secret message</span><br><span class="line">xor-key: whoamiwhoamiwhoamiwhoami</span><br></pre></td></tr></table></figure>
 <h1 id="图片异或加密">图片异或加密</h1>
 <p>使用opencv进行图片加密很贱，图片异或加密的代码如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">image_xor</span>(<span class="params">image, image_key</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;图片异或&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> cv2.bitwise_xor(image, image_key)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test_image_xor</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;测试图片异或&quot;&quot;&quot;</span></span><br><span class="line">    img = cv2.imread(data_file_path(<span class="string">&#x27;data/image/dog_bike_car.jpg&#x27;</span>))</span><br><span class="line">    <span class="comment"># 创建一个和原图像大小相同的随机图像</span></span><br><span class="line">    rows, cols, channels = img.shape</span><br><span class="line">    img_key = np.random.randint(<span class="number">0</span>, <span class="number">256</span>, (rows, cols, <span class="number">3</span>), dtype=np.uint8)</span><br><span class="line">    cv2.imshow(<span class="string">&#x27;img&#x27;</span>, img)</span><br><span class="line">    cv2.imshow(<span class="string">&#x27;img_key&#x27;</span>, img_key)</span><br><span class="line"></span><br><span class="line">    img_encrypted = image_xor(img, img_key)</span><br><span class="line">    cv2.imshow(<span class="string">&#x27;img_encrypted&#x27;</span>, img_encrypted)</span><br><span class="line">    img_decrypted = image_xor(img_encrypted, img_key)</span><br><span class="line">    cv2.imshow(<span class="string">&#x27;img_decrypted&#x27;</span>, img_decrypted)</span><br><span class="line"></span><br><span class="line">    xor_key = image_xor(img, img_encrypted)</span><br><span class="line">    cv2.imshow(<span class="string">&#x27;xor_key&#x27;</span>, xor_key)</span><br><span class="line"></span><br><span class="line">    cv2.waitKey(<span class="number">0</span>)</span><br><span class="line">    cv2.destroyAllWindows()</span><br></pre></td></tr></table></figure>
+<p>原图：</p>
+<center>
+<img src="/2024/10/20/图片异或加密/dog_bike_car.jpg" title="原图" style="zoom:67%;">
+</center>
+<p>密图：</p>
+<center>
+<img src="/2024/10/20/图片异或加密/img_encrypted.jpg" title="密图" style="zoom:67%;">
+</center>
+<p>破截图=密图 ^ 密钥</p>
+<center>
+<img src="/2024/10/20/图片异或加密/dog_bike_car.jpg" title="原图" style="zoom:67%;">
+</center>
+<h1 id="已知明文攻击">已知明文攻击</h1>
 <p>直接使用异或加密很简单，但是很不安全，所以异或一般作为更为复杂的加密算法的组成部分。</p>
+<p>设A为明文，B为密钥，C为密文，则A ^ B=C，则A ^ C=A ^ A^
+B=B，很容易根据A和C求B，进而得到密钥。</p>
+<p>比如的图片加密，我们可以让原图和加密图异或操作一下，就可以得到密钥。</p>
+<p>密钥如下：</p>
+<center>
+<img src="/2024/10/20/图片异或加密/xor_key.jpg" title="密钥" style="zoom:67%;">
+</center>
 <p>关于图片强加密有一篇综述写的不错：An overview of encryption
-algorithms in color images。</p>
+algorithms in color images，其他加密算法也会逐步展开。</p>
 
     </div>
 
@@ -365,7 +390,7 @@ algorithms in color images。</p>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">14 分钟</span>
+    <span title="站点阅读时长">15 分钟</span>
   </span>
 </div>
 
