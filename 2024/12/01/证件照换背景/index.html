@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"sailingsan.top","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="生活照转证件照需要做一些处理，包括换背景、扣头像、调尺寸、调光亮、调DPI，网上有很多在线处理程序（有点不安全），本地也有很多离线处理程序（有点不免费）。本文主要记录下在个人电脑上，基于OpenCV、YOLO实现生活照转证件照的过程。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="证件照换背景">
+<meta property="og:url" content="https://sailingsan.top/2024/12/01/%E8%AF%81%E4%BB%B6%E7%85%A7%E6%8D%A2%E8%83%8C%E6%99%AF/index.html">
+<meta property="og:site_name" content="SailingSan">
+<meta property="og:description" content="生活照转证件照需要做一些处理，包括换背景、扣头像、调尺寸、调光亮、调DPI，网上有很多在线处理程序（有点不安全），本地也有很多离线处理程序（有点不免费）。本文主要记录下在个人电脑上，基于OpenCV、YOLO实现生活照转证件照的过程。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sailingsan.top/2024/12/01/%E8%AF%81%E4%BB%B6%E7%85%A7%E6%8D%A2%E8%83%8C%E6%99%AF/life3.jpg">
+<meta property="og:image" content="https://sailingsan.top/2024/12/01/%E8%AF%81%E4%BB%B6%E7%85%A7%E6%8D%A2%E8%83%8C%E6%99%AF/bg2blue.png">
+<meta property="og:image" content="https://sailingsan.top/2024/12/01/%E8%AF%81%E4%BB%B6%E7%85%A7%E6%8D%A2%E8%83%8C%E6%99%AF/life2card.png">
+<meta property="og:image" content="https://sailingsan.top/2024/12/01/%E8%AF%81%E4%BB%B6%E7%85%A7%E6%8D%A2%E8%83%8C%E6%99%AF/yolocard.png">
+<meta property="article:published_time" content="2024-12-01T02:02:54.000Z">
+<meta property="article:modified_time" content="2025-04-20T17:04:04.000Z">
+<meta property="article:author" content="san">
+<meta property="article:tag" content="CV">
+<meta property="article:tag" content="YOLO">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sailingsan.top/2024/12/01/%E8%AF%81%E4%BB%B6%E7%85%A7%E6%8D%A2%E8%83%8C%E6%99%AF/life3.jpg">
+
+
+<link rel="canonical" href="https://sailingsan.top/2024/12/01/%E8%AF%81%E4%BB%B6%E7%85%A7%E6%8D%A2%E8%83%8C%E6%99%AF/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://sailingsan.top/2024/12/01/%E8%AF%81%E4%BB%B6%E7%85%A7%E6%8D%A2%E8%83%8C%E6%99%AF/","path":"2024/12/01/证件照换背景/","title":"证件照换背景"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>证件照换背景 | SailingSan</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">SailingSan</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8D%A2%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">换背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%B4%BB%E7%85%A7%E8%BD%AC%E8%AF%81%E4%BB%B6%E7%85%A7"><span class="nav-number">2.</span> <span class="nav-text">生活照转证件照</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8D%A2dpi"><span class="nav-number">3.</span> <span class="nav-text">换DPI</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">san</p>
+  <div class="site-description" itemprop="description">i didn't change, i just find myself.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wangsan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wangsan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://sailingsan.top/2024/12/01/%E8%AF%81%E4%BB%B6%E7%85%A7%E6%8D%A2%E8%83%8C%E6%99%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="san">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="SailingSan">
+      <meta itemprop="description" content="i didn't change, i just find myself.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="证件照换背景 | SailingSan">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          证件照换背景
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-12-01 10:02:54" itemprop="dateCreated datePublished" datetime="2024-12-01T10:02:54+08:00">2024-12-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-04-21 01:04:04" itemprop="dateModified" datetime="2025-04-21T01:04:04+08:00">2025-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/CV/" itemprop="url" rel="index"><span itemprop="name">CV</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>生活照转证件照需要做一些处理，包括换背景、扣头像、调尺寸、调光亮、调DPI，网上有很多在线处理程序（有点不安全），本地也有很多离线处理程序（有点不免费）。本文主要记录下在个人电脑上，基于OpenCV、YOLO实现生活照转证件照的过程。</p>
+<span id="more"></span>
+<h3 id="换背景">换背景</h3>
+<p><a href="https://baike.baidu.com/item/%E6%A0%87%E5%87%86%E8%AF%81%E4%BB%B6%E7%85%A7/3946934?fr=aladdin">标准证件照</a>是大家办理各种证书、填写各种档案的必备元素。以前照证件照需要去照相馆，配上背景幕布和补光灯，咔嚓一声，光鲜亮丽的证件照就出来了。现在手机拍照越来越方便，越来越清晰，于是去照相馆拍证件照的需求越来越少，大家更希望基于手机拍摄的生活照做一个证件照。</p>
+<p>如果我们有一个标准证件照，只是做下背景的话的，这个比较简单。</p>
+<center>
+<img src="/2024/12/01/证件照换背景/life3.jpg" title="白底证件照" alt="“白底证件照”/">
+</center>
+<p>核心流程如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">基于opencv实现证件照白底转蓝底:</span><br><span class="line">1. 灰度</span><br><span class="line">2. 二值化</span><br><span class="line">3. 取反</span><br><span class="line">4. 闭运算</span><br><span class="line">5. 换黑为蓝</span><br></pre></td></tr></table></figure>
+<p>核心代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">test_cv_card</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    基于opencv实现证件照白底转蓝底:</span></span><br><span class="line"><span class="string">    1. 灰度</span></span><br><span class="line"><span class="string">    2. 二值化</span></span><br><span class="line"><span class="string">    3. 取反</span></span><br><span class="line"><span class="string">    4. 闭运算</span></span><br><span class="line"><span class="string">    5. 换黑为蓝</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 读取照片并显示</span></span><br><span class="line">    img = cv2.imread(data_file_path(<span class="string">&#x27;data/image/card/life3.jpg&#x27;</span>))</span><br><span class="line">    <span class="comment"># 转换图片到灰度</span></span><br><span class="line">    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)</span><br><span class="line">    <span class="comment"># 应用阈值来找到非白色的部分（二值化）</span></span><br><span class="line">    _, mask = cv2.threshold(gray, <span class="number">230</span>, <span class="number">255</span>, cv2.THRESH_BINARY)</span><br><span class="line">    mask = cv2.bitwise_not(mask)</span><br><span class="line">    <span class="comment"># 闭运算</span></span><br><span class="line">    kernel = np.ones((<span class="number">15</span>, <span class="number">15</span>), np.uint8)</span><br><span class="line">    mask_close = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 黑色部分替换</span></span><br><span class="line">    rows, cols, channels = img.shape</span><br><span class="line">    img_blue = img.copy()</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(rows):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(cols):</span><br><span class="line">            <span class="keyword">if</span> mask_close[i, j] == <span class="number">0</span>:  <span class="comment"># 0代表黑色</span></span><br><span class="line">                img_blue[i, j] = (<span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>)  <span class="comment"># 此处替换颜色，为BGR通道，不是RGB通道</span></span><br><span class="line"></span><br><span class="line">    plt.subplot(<span class="number">151</span>)</span><br><span class="line">    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    plt.title(<span class="string">&quot;img&quot;</span>)</span><br><span class="line"></span><br><span class="line">    plt.subplot(<span class="number">152</span>)</span><br><span class="line">    plt.imshow(gray, <span class="string">&quot;gray&quot;</span>)</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    plt.title(<span class="string">&quot;gray&quot;</span>)</span><br><span class="line"></span><br><span class="line">    plt.subplot(<span class="number">153</span>)</span><br><span class="line">    plt.imshow(cv2.cvtColor(mask, cv2.COLOR_BGR2RGB))</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    plt.title(<span class="string">&quot;mask&quot;</span>)</span><br><span class="line"></span><br><span class="line">    plt.subplot(<span class="number">154</span>)</span><br><span class="line">    plt.imshow(cv2.cvtColor(mask_close, cv2.COLOR_BGR2RGB))</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    plt.title(<span class="string">&quot;mask_close&quot;</span>)</span><br><span class="line"></span><br><span class="line">    plt.subplot(<span class="number">155</span>)</span><br><span class="line">    plt.imshow(cv2.cvtColor(img_blue, cv2.COLOR_BGR2RGB))</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    plt.title(<span class="string">&quot;img_blue&quot;</span>)</span><br><span class="line"></span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+<p>核心结果如下：</p>
+<center>
+<img src="/2024/12/01/证件照换背景/bg2blue.png" title="白底转蓝底" alt="白底转蓝底">
+</center>
+<p>补充说明：</p>
+<ul>
+<li>为什么要做闭运算？因为我们在做二值化的时候，取的灰度空间是[230,255]，该空间下会有一些比较白（&gt;230）的部分也会被错误的划分为白色背景，因此做了闭运算（先膨胀后腐蚀），把图片内部细节给去掉了。</li>
+<li>原图一定要闭运算么？由于原图背景是存白的，且人像部分没有非常白的点，因此我们把二值的阈值设置额为[250,255]，也可以保证只有背景部分会被抠出来。</li>
+</ul>
+<p>遇到问题：</p>
+<p>如果背景色是白色，我们可以跟进上面的二值化和闭运算实现背景切换，但如果背景不是那么白，上面的方式就无能为力了，比如下面这个图，只把非常白的地方换成蓝色了，但整个背景墙面没有换。</p>
+<center>
+<img src="/2024/12/01/证件照换背景/life2card.png" title="生活转证件" alt="生活转证件">
+</center>
+<h3 id="生活照转证件照">生活照转证件照</h3>
+<p>上面提到的场景经常用到，需要把自己的生活照转为证件照，但是又不想使用在线工具。这是可以使用我们yolo-seg快速实现背景切换。</p>
+<p>核心流程如下:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">基于yolo-seg实现证件照白底转蓝底:</span><br><span class="line">1. 推理（分割），获取Mask，如果很多物体，可能需要选取最大的或者人像的Mask</span><br><span class="line">2. 生成背景色图片，根据Mask部分保留原始图片值</span><br><span class="line">3. 注意由于yolo默认会把图片resize，所以得到的mask是resize后的，因此根据mask保留原图时也注意是缩放的原图。</span><br></pre></td></tr></table></figure>
+<p>核心代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">test_yolo_seg_card</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;yolo seg模型制作身份证&quot;&quot;&quot;</span></span><br><span class="line">    model = YOLO(model_dir + <span class="string">&quot;yolo11m-seg.pt&quot;</span>)</span><br><span class="line">    results = model(data_file_path(<span class="string">&#x27;data/image/card/life1.jpg&#x27;</span>))</span><br><span class="line">    img = cv2.imread(data_file_path(<span class="string">&#x27;data/image/card/life1.jpg&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 这里特别注意，因为使用yolo训练的时候默认会把图片resize</span></span><br><span class="line">    mask_array = results[<span class="number">0</span>].masks.data[<span class="number">0</span>].cpu().numpy().astype(np.bool_)</span><br><span class="line">    h, w = mask_array.shape</span><br><span class="line">    resized_img = cv2.resize(img, (w, h))  <span class="comment"># 注意OpenCV中尺寸是先宽度后高度</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 推理结果</span></span><br><span class="line">    mask = np.zeros_like(resized_img)</span><br><span class="line">    mask[mask_array] = [<span class="number">0</span>, <span class="number">0</span>, <span class="number">255</span>]</span><br><span class="line">    mask_resized = cv2.addWeighted(resized_img, <span class="number">1</span>, mask, <span class="number">0.5</span>, <span class="number">0</span>)</span><br><span class="line">    mask_original = cv2.resize(mask_resized, (img.shape[<span class="number">1</span>], img.shape[<span class="number">0</span>]))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 白底</span></span><br><span class="line">    masked_image = np.zeros_like(resized_img)</span><br><span class="line">    masked_image[...] = <span class="number">255</span></span><br><span class="line">    masked_image[mask_array] = resized_img[mask_array]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 蓝底</span></span><br><span class="line">    masked_image_blue = np.zeros(resized_img.shape, dtype=np.uint8)</span><br><span class="line">    masked_image_blue[:, :, <span class="number">0</span>] = <span class="number">255</span></span><br><span class="line">    masked_image_blue[mask_array] = resized_img[mask_array]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 显示</span></span><br><span class="line">    plt.subplot(<span class="number">141</span>)</span><br><span class="line">    plt.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    plt.title(<span class="string">&quot;img&quot;</span>)</span><br><span class="line"></span><br><span class="line">    ax1 = plt.subplot(<span class="number">142</span>)</span><br><span class="line">    plt.imshow(cv2.cvtColor(mask_original, cv2.COLOR_BGR2RGB))</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    plt.title(<span class="string">&quot;mask_original&quot;</span>)</span><br><span class="line"></span><br><span class="line">    plt.subplot(<span class="number">143</span>)</span><br><span class="line">    plt.imshow(cv2.cvtColor(masked_image, cv2.COLOR_BGR2RGB))</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    plt.title(<span class="string">&quot;masked_white&quot;</span>)</span><br><span class="line"></span><br><span class="line">    plt.subplot(<span class="number">144</span>)</span><br><span class="line">    plt.imshow(cv2.cvtColor(masked_image_blue, cv2.COLOR_BGR2RGB))</span><br><span class="line">    plt.axis(<span class="string">&#x27;off&#x27;</span>)</span><br><span class="line">    plt.title(<span class="string">&quot;masked_blue&quot;</span>)</span><br><span class="line"></span><br><span class="line">    boxes, names = results[<span class="number">0</span>].boxes, results[<span class="number">0</span>].names</span><br><span class="line">    cls, conf = <span class="built_in">int</span>(boxes.cls), <span class="built_in">float</span>(boxes.conf)</span><br><span class="line">    name = names[cls]</span><br><span class="line">    label = <span class="string">f&quot;<span class="subst">&#123;name&#125;</span> <span class="subst">&#123;conf:<span class="number">.2</span>f&#125;</span>&quot;</span></span><br><span class="line">    box = boxes.xyxy.squeeze()</span><br><span class="line">    rect = patches.Rectangle((box[<span class="number">0</span>], box[<span class="number">1</span>]), box[<span class="number">2</span>] - box[<span class="number">0</span>], box[<span class="number">3</span>] - box[<span class="number">1</span>], edgecolor=<span class="string">&#x27;r&#x27;</span>, facecolor=<span class="string">&#x27;none&#x27;</span>)</span><br><span class="line">    ax1.add_patch(rect)</span><br><span class="line">    ax1.text(box[<span class="number">0</span>], box[<span class="number">1</span>], label, color=<span class="string">&#x27;red&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    plt.show()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>核心结果过下：</p>
+<center>
+<img src="/2024/12/01/证件照换背景/yolocard.png" title="生活转证件" alt="生活转证件">
+</center>
+<h3 id="换dpi">换DPI</h3>
+<p>有些网站上传的证件照需要调整DPI（每英寸点数），通过<strong>Pillow</strong>可以快速设置DPI。</p>
+<p>核心代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">test_change_dpi</span>():</span><br><span class="line">    <span class="string">&quot;&quot;&quot;改变图片的dpi&quot;&quot;&quot;</span></span><br><span class="line">    image = Image.<span class="built_in">open</span>(source_img)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;原图片信息 : <span class="subst">&#123;image.info&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;原图片DPI: <span class="subst">&#123;image.info.get(<span class="string">&#x27;dpi&#x27;</span>)&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;原图片尺寸: <span class="subst">&#123;image.size&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    new_dpi = (<span class="number">300</span>, <span class="number">300</span>)</span><br><span class="line">    image.info[<span class="string">&#x27;dpi&#x27;</span>] = new_dpi</span><br><span class="line">    new_image_path = data_file_path(<span class="string">&#x27;data/image/card/life1_dpi300.jpg&#x27;</span>)</span><br><span class="line">    image.save(new_image_path, dpi=new_dpi)  <span class="comment"># 调整DPI（这不会改变图像的实际像素尺寸，只改变元数据）</span></span><br><span class="line">    new_image = Image.<span class="built_in">open</span>(new_image_path)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;-&quot;</span> * <span class="number">33</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;新图片信息 : <span class="subst">&#123;new_image.info&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;新图片DPI: <span class="subst">&#123;new_image.info.get(<span class="string">&#x27;dpi&#x27;</span>)&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;新图片尺寸: <span class="subst">&#123;new_image.size&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>核心日志：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">原图片信息 : &#123;&#x27;jfif&#x27;: 257, &#x27;jfif_version&#x27;: (1, 1), &#x27;jfif_unit&#x27;: 0, &#x27;jfif_density&#x27;: (1, 1)&#125;</span><br><span class="line">原图片DPI: None</span><br><span class="line">原图片尺寸: (1080, 1439)</span><br><span class="line">---------------------------------</span><br><span class="line">新图片信息 : &#123;&#x27;jfif&#x27;: 257, &#x27;jfif_version&#x27;: (1, 1), &#x27;dpi&#x27;: (300, 300), &#x27;jfif_unit&#x27;: 1, &#x27;jfif_density&#x27;: (300, 300)&#125;</span><br><span class="line">新图片DPI: (300, 300)</span><br><span class="line">新图片尺寸: (1080, 1439)</span><br></pre></td></tr></table></figure>
+<p>注意事项：</p>
+<ul>
+<li><p>JFIF元信息说明</p>
+<ul>
+<li><strong>'jfif': 257</strong>：这通常表示JFIF
+APP0标记的存在，257是标记的标识符。</li>
+<li><strong>'jfif_version': (1, 1)</strong>：表示JFIF的版本是1.1。</li>
+<li><strong>'jfif_unit':
+0</strong>：表示没有指定单位，通常0表示无单位，1表示英寸，2表示厘米。</li>
+<li><strong>'jfif_density': (1,
+1)</strong>：表示X和Y方向的密度，单位是上面<code>jfif_unit</code>指定的。由于<code>jfif_unit</code>为0，这里的密度没有实际意义。</li>
+</ul></li>
+<li><p>DPI与图像质量：</p>
+<ul>
+<li>DPI主要影响打印时的尺寸比例，不会改变图像的像素质量。</li>
+<li>提高DPI不会使图像更清晰，除非同时增加了像素尺寸。</li>
+</ul></li>
+<li><p>文件格式：</p>
+<ul>
+<li>确保保存为支持DPI信息的格式，如JPEG、TIFF。</li>
+<li>PNG格式通常不支持嵌入DPI信息。</li>
+</ul></li>
+<li><p>实际应用：</p>
+<ul>
+<li>在打印照片或制作证件照时，正确的DPI设置非常重要。</li>
+</ul></li>
+<li><p>常见的证件照要求DPI为300或更高。</p></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/CV/" rel="tag"># CV</a>
+              <a href="/tags/YOLO/" rel="tag"># YOLO</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/11/03/%E5%9B%BE%E7%89%87%E7%8C%AB%E8%84%B8%E8%BD%AC%E6%8D%A2%E5%8A%A0%E5%AF%86/" rel="prev" title="图片猫脸转换加密">
+                  <i class="fa fa-angle-left"></i> 图片猫脸转换加密
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">san</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">22k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">20 分钟</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
