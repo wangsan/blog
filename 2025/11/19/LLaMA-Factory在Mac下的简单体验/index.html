@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha256-5eIC48iZUHmSlSUz9XtjRyK2mzQkHScZY1WdMaoz74E=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"sailingsan.top","root":"/","images":"/images","scheme":"Mist","darkmode":false,"version":"8.21.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":true,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="LLaMA-Factory可以使用零代码命令行与Web UI轻松微调百余种大模型，对于想快速体验一下训练的同学非常友好。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LLaMA-Factory在Mac下的简单体验">
+<meta property="og:url" content="https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/index.html">
+<meta property="og:site_name" content="SailingSan">
+<meta property="og:description" content="LLaMA-Factory可以使用零代码命令行与Web UI轻松微调百余种大模型，对于想快速体验一下训练的同学非常友好。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/install.png">
+<meta property="og:image" content="https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/load_model.png">
+<meta property="og:image" content="https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/who_before.png">
+<meta property="og:image" content="https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/dataset.png">
+<meta property="og:image" content="https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/train.png">
+<meta property="og:image" content="https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/who_after.png">
+<meta property="og:image" content="https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/eval.png">
+<meta property="og:image" content="https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/export.png">
+<meta property="og:image" content="https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/export_chat.png">
+<meta property="article:published_time" content="2025-11-19T13:39:26.000Z">
+<meta property="article:modified_time" content="2025-11-20T05:49:56.383Z">
+<meta property="article:author" content="san">
+<meta property="article:tag" content="train,eval">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/install.png">
+
+
+<link rel="canonical" href="https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/","path":"2025/11/19/LLaMA-Factory在Mac下的简单体验/","title":"LLaMA-Factory在Mac下的简单体验"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>LLaMA-Factory在Mac下的简单体验 | SailingSan</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">SailingSan</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E4%BF%A1%E6%81%AF"><span class="nav-number">1.</span> <span class="nav-text">参考信息</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E5%B9%B6%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">下载并安装</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">下载模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8webui"><span class="nav-number">4.</span> <span class="nav-text">启动WebUI</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A0%E8%BD%BD%E6%A8%A1%E5%9E%8B%E5%B9%B6%E4%BD%93%E9%AA%8C%E9%97%AE%E7%AD%94"><span class="nav-number">5.</span> <span class="nav-text">加载模型并体验问答</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8lora%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E8%87%AA%E6%88%91%E8%BA%AB%E4%BB%BD%E8%AE%A4%E7%9F%A5"><span class="nav-number">6.</span> <span class="nav-text">使用LoRA训练模型自我身份认知</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">6.1.</span> <span class="nav-text">准备数据集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%AE%AD%E7%BB%83%E5%8F%82%E6%95%B0%E5%B9%B6%E8%AE%AD%E7%BB%83"><span class="nav-number">6.2.</span> <span class="nav-text">配置训练参数并训练</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E5%90%8E%E4%BD%93%E9%AA%8C%E5%92%8C%E8%AF%84%E4%BC%B0"><span class="nav-number">6.3.</span> <span class="nav-text">训练后体验和评估</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%AF%BC%E5%87%BA%E5%92%8C%E6%8E%A8%E7%90%86"><span class="nav-number">6.4.</span> <span class="nav-text">模型导出和推理</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">san</p>
+  <div class="site-description" itemprop="description">i didn't change, i just find myself.</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/wangsan" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;wangsan" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://sailingsan.top/2025/11/19/LLaMA-Factory%E5%9C%A8Mac%E4%B8%8B%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%93%E9%AA%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="san">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="SailingSan">
+      <meta itemprop="description" content="i didn't change, i just find myself.">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="LLaMA-Factory在Mac下的简单体验 | SailingSan">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LLaMA-Factory在Mac下的简单体验
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-11-19 21:39:26" itemprop="dateCreated datePublished" datetime="2025-11-19T21:39:26+08:00">2025-11-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-11-20 13:49:56" itemprop="dateModified" datetime="2025-11-20T13:49:56+08:00">2025-11-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/LLM/" itemprop="url" rel="index"><span itemprop="name">LLM</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>LLaMA-Factory可以使用零代码命令行与Web
+UI轻松微调百余种大模型，对于想快速体验一下训练的同学非常友好。</p>
+<span id="more"></span>
+<h1 id="参考信息">参考信息</h1>
+<p><a href="https://github.com/hiyouga/LLaMA-Factory/blob/main/README_zh.md">github</a></p>
+<p><a href="https://llamafactory.readthedocs.io/zh-cn/latest/getting_started/installation.html">online-doc</a></p>
+<p><a href="https://community.sslcode.com.cn/689949fb080e555a88d7700c.html">mac-llama-factory例子</a></p>
+<h1 id="下载并安装">下载并安装</h1>
+<blockquote>
+<p>[!IMPORTANT] 此步骤为必需。 😅</p>
+</blockquote>
+<p>下载源码，创建环境，安装依赖</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">git clone --depth 1 https://github.com/hiyouga/LLaMA-Factory.git</span><br><span class="line">cd LLaMA-Factory</span><br><span class="line"></span><br><span class="line">conda create -n  py310 python=3.10</span><br><span class="line">conda activate py310</span><br><span class="line"></span><br><span class="line">pip install -e &quot;.[torch,metrics]&quot; --no-build-isolation</span><br></pre></td></tr></table></figure>
+<p>Tips：</p>
+<ul>
+<li>建议使用python 3.10版本，看readme的推荐<a href="https://github.com/hiyouga/LLaMA-Factory/blob/main/README_zh.md#%E8%BD%AF%E7%A1%AC%E4%BB%B6%E4%BE%9D%E8%B5%96">软硬件依赖</a></li>
+<li>我的Mac芯片：Apple M1 Pro，macOS：13.4</li>
+</ul>
+<p>安装依赖可能遇到的坑</p>
+<ul>
+<li>找不到Cython模块 → 单独安装下 <code>pip install Cython</code></li>
+<li>ERROR: Failed building wheel for av → 单独安装下
+<code>conda install av -c conda-forge</code></li>
+</ul>
+<p>整体安装有惊无险，成功后提示安装的库如下图：</p>
+<center>
+<img src="/2025/11/19/LLaMA-Factory在Mac下的简单体验/install.png" title alt>
+</center>
+<h1 id="下载模型">下载模型</h1>
+<blockquote>
+<p>建议用huggingface-cli提前下载模型，速度更快</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">huggingface-cli download --resume-download Qwen/Qwen2.5-0.5B-Instruct</span><br></pre></td></tr></table></figure>
+<h1 id="启动webui">启动WebUI</h1>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">llamafactory-cli --help</span><br></pre></td></tr></table></figure>
+<p>这里使用LLaMA Board 进行可视化微调，执行如下命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">llamafactory-cli webui</span><br></pre></td></tr></table></figure>
+<p>成功启动后，看gradio地址 http://localhost:7860/
+页面和readme的例子一样，如果读英文慢，可以改语言为zh</p>
+<h1 id="加载模型并体验问答">加载模型并体验问答</h1>
+<p>前面步骤我们下载了模型
+Qwen/Qwen2.5-0.5B-Instruct，这次加载这个模型（忽略途中的lora的检查点路径哈）</p>
+<center>
+<img src="/2025/11/19/LLaMA-Factory在Mac下的简单体验/load_model.png" title alt>
+</center>
+<p>问模型你是谁</p>
+<center>
+<img src="/2025/11/19/LLaMA-Factory在Mac下的简单体验/who_before.png" title alt>
+</center>
+<h1 id="使用lora训练模型自我身份认知">使用LoRA训练模型自我身份认知</h1>
+<p>正式场景不推荐训练自我身份认知，把身份认知信息放在system
+prompt更有效。</p>
+<h2 id="准备数据集">准备数据集</h2>
+<blockquote>
+<p>注意：使用自定义数据集时，请更新 data/dataset_info.json 文件。</p>
+</blockquote>
+<center>
+<img src="/2025/11/19/LLaMA-Factory在Mac下的简单体验/dataset.png" title alt>
+</center>
+<p>identity数据集在
+LLaMA-Factory目录下的data目录中，data的目录如下（贴图比较麻烦，看命令行输出吧）</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">tree</span><br><span class="line"></span><br><span class="line"><span class="comment"># 输出如下</span></span><br><span class="line">.</span><br><span class="line">├── README.md</span><br><span class="line">├── README_zh.md</span><br><span class="line">├── alpaca_en_demo.json</span><br><span class="line">├── alpaca_zh_demo.json</span><br><span class="line">├── c4_demo.jsonl</span><br><span class="line">├── dataset_info.json</span><br><span class="line">├── dpo_en_demo.json</span><br><span class="line">├── dpo_zh_demo.json</span><br><span class="line">├── glaive_toolcall_en_demo.json</span><br><span class="line">├── glaive_toolcall_zh_demo.json</span><br><span class="line">├── identity.json    <span class="comment"># 这里是自我身份认知数据集</span></span><br><span class="line">├── kto_en_demo.json</span><br><span class="line">├── mllm_audio_demo.json</span><br><span class="line">├── mllm_demo.json</span><br><span class="line">├── mllm_demo_data</span><br><span class="line">│   ├── 1.jpg</span><br><span class="line">│   ├── 1.mp3</span><br><span class="line">│   ├── 1.mp4</span><br><span class="line">│   ├── 2.avi</span><br><span class="line">│   ├── 2.jpg</span><br><span class="line">│   ├── 2.wav</span><br><span class="line">│   ├── 3.flac</span><br><span class="line">│   ├── 3.jpg</span><br><span class="line">│   ├── 3.mp4</span><br><span class="line">│   ├── 4.mp3</span><br><span class="line">│   └── 4.mp4</span><br><span class="line">├── mllm_video_audio_demo.json</span><br><span class="line">├── mllm_video_demo.json</span><br><span class="line">├── reason_tool_use_demo_50.jsonl</span><br><span class="line">├── v1_dpo_demo.jsonl</span><br><span class="line">├── v1_dpo_demo.yaml</span><br><span class="line">├── v1_sft_demo.jsonl</span><br><span class="line">├── v1_sft_demo.yaml</span><br><span class="line">└── wiki_demo.txt</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>看一眼identity数据集</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;instruction&quot;</span><span class="punctuation">:</span> <span class="string">&quot;您好&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;input&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;output&quot;</span><span class="punctuation">:</span> <span class="string">&quot;您好，我是 &#123;&#123;name&#125;&#125;，很高兴为您服务。有什么我可以帮您解决的问题或者需要我提供的帮助吗？&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;instruction&quot;</span><span class="punctuation">:</span> <span class="string">&quot;你是谁&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;input&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;output&quot;</span><span class="punctuation">:</span> <span class="string">&quot;您好，我是由 &#123;&#123;author&#125;&#125; 发明的 &#123;&#123;name&#125;&#125;。我可以为您提供多种多样的服务，比如翻译、写代码、闲聊、为您答疑解惑等。&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;instruction&quot;</span><span class="punctuation">:</span> <span class="string">&quot;你是谁？&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;input&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;output&quot;</span><span class="punctuation">:</span> <span class="string">&quot;您好，我是 &#123;&#123;name&#125;&#125;，一个由 &#123;&#123;author&#125;&#125; 发明的人工智能助手。我可以回答各种问题，提供实用的建议和帮助，帮助用户完成各种任务。&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<h2 id="配置训练参数并训练">配置训练参数并训练</h2>
+<p>如上图界面选loRA，3个Epoch训练效果不太好（数据少91*3），我按10个Epoch训练的</p>
+<p>点界面下方的预览命令，输出如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">llamafactory-cli train \</span><br><span class="line">    --stage sft \</span><br><span class="line">    --do_train True \</span><br><span class="line">    --model_name_or_path Qwen/Qwen2.5-0.5B-Instruct \</span><br><span class="line">    --preprocessing_num_workers 16 \</span><br><span class="line">    --finetuning_type lora \</span><br><span class="line">    --template qwen \</span><br><span class="line">    --flash_attn auto \</span><br><span class="line">    --dataset_dir data \</span><br><span class="line">    --dataset identity \</span><br><span class="line">    --cutoff_len 2048 \</span><br><span class="line">    --learning_rate 5e-05 \</span><br><span class="line">    --num_train_epochs 10.0 \</span><br><span class="line">    --max_samples 100000 \</span><br><span class="line">    --per_device_train_batch_size 2 \</span><br><span class="line">    --gradient_accumulation_steps 8 \</span><br><span class="line">    --lr_scheduler_type cosine \</span><br><span class="line">    --max_grad_norm 1.0 \</span><br><span class="line">    --logging_steps 5 \</span><br><span class="line">    --save_steps 100 \</span><br><span class="line">    --warmup_steps 0 \</span><br><span class="line">    --packing False \</span><br><span class="line">    --enable_thinking True \</span><br><span class="line">    --report_to none \</span><br><span class="line">    --output_dir saves/Qwen2.5-0.5B-Instruct/lora/train_2025-11-19-20-30-45 \</span><br><span class="line">    --plot_loss True \</span><br><span class="line">    --trust_remote_code True \</span><br><span class="line">    --ddp_timeout 180000000 \</span><br><span class="line">    --include_num_input_tokens_seen True \</span><br><span class="line">    --optim adamw_torch \</span><br><span class="line">    --lora_rank 8 \</span><br><span class="line">    --lora_alpha 16 \</span><br><span class="line">    --lora_dropout 0 \</span><br><span class="line">    --lora_target all</span><br></pre></td></tr></table></figure>
+<p>训练60Step后，loss收敛到1左右，大概用了半小时</p>
+<center>
+<img src="/2025/11/19/LLaMA-Factory在Mac下的简单体验/train.png" title alt>
+</center>
+<p>训练结束日志(3epoch版本)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">***** train metrics *****</span><br><span class="line">  epoch                    =        3.0</span><br><span class="line">  num_input_tokens_seen    =      19656</span><br><span class="line">  total_flos               =    39793GF</span><br><span class="line">  train_loss               =        0.0</span><br><span class="line">  train_runtime            = 0:00:00.00</span><br><span class="line">  train_samples_per_second =  111984.84</span><br><span class="line">  train_steps_per_second   =   7383.616</span><br></pre></td></tr></table></figure>
+<p>Tips：</p>
+<ul>
+<li><p>训练没有使用MPS，仍然走的CPU，先走CPU亦可，能走通。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[INFO|2025-11-19 21:03:53] llamafactory.hparams.parser:468 &gt;&gt; Process rank: 0, world size: 1, device: cpu, distributed training: False, compute dtype: None</span><br></pre></td></tr></table></figure></li>
+<li><p>ValueError: Your setup doesn't support bf16/gpu. →
+<strong>！！精度选fp32，不选bp16，也不要选fp16，敲重点，CPU模式关键配置</strong></p></li>
+<li><p>如上图界面选loRA，3个Epoch训练效果不太好（数据少91*3），我按10个Epoch训练的</p></li>
+</ul>
+<h2 id="训练后体验和评估">训练后体验和评估</h2>
+<p>体验：训练后在chat页面，选择lora模型，询问你是谁，和我们的训练集结果一样，和基模的回答不一样了，训练生效。</p>
+<center>
+<img src="/2025/11/19/LLaMA-Factory在Mac下的简单体验/who_after.png" title alt>
+</center>
+<p>评估页面，还是以identity作为评测集（应该用单独的评测集），简单跑下5分钟后，生成基础的指标，比如bleu、rouge等效果指标和一些性能指标。只有基本指标，指标项较少。</p>
+<center>
+<img src="/2025/11/19/LLaMA-Factory在Mac下的简单体验/eval.png" title alt>
+</center>
+<h2 id="模型导出和推理">模型导出和推理</h2>
+<center>
+<img src="/2025/11/19/LLaMA-Factory在Mac下的简单体验/export.png" title alt>
+</center>
+<p>导出文件目录santest，导出成功后界面如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Modelfile 464</span><br><span class="line">added_tokens.json 605</span><br><span class="line">chat_template.jinja 2507</span><br><span class="line">config.json 1226</span><br><span class="line">generation_config.json 242</span><br><span class="line">merges.txt 1671853</span><br><span class="line">model.safetensors 1976163472  #1.9G 就是fp32的模型文件</span><br><span class="line">special_tokens_map.json 613</span><br><span class="line">tokenizer.json 11421896</span><br><span class="line">tokenizer_config.json 4712</span><br><span class="line">vocab.json 2776833</span><br></pre></td></tr></table></figure>
+<p>然后重新加载看看是不是咱们lora好的，做个问答试试</p>
+<center>
+<img src="/2025/11/19/LLaMA-Factory在Mac下的简单体验/export_chat.png" title alt>
+</center>
+<h1 id="总结">总结</h1>
+<p>LLaMA-Factory是个很好的个人电脑界面化体验训练推理流程的应用，期望大家能够一步一步的从入门到xx，从面子到里子，因热爱而学习，因学习更热爱。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/train-eval/" rel="tag"># train,eval</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/12/01/%E8%AF%81%E4%BB%B6%E7%85%A7%E6%8D%A2%E8%83%8C%E6%99%AF/" rel="prev" title="证件照换背景">
+                  <i class="fa fa-angle-left"></i> 证件照换背景
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">san</span>
+  </div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">26k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">24 分钟</span>
+  </span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
